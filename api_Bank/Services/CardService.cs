@@ -19,9 +19,8 @@ public class CardService : ICardService
     
     public async Task<List<CardDto.Read>> GetAllAsync()
     {
-        var cards = await _cardRepository.GetAllAsync
-            ();
-        return (List<CardDto.Read>)cards.Select(e => new CardDto.Read
+        var cards = await _cardRepository.GetAllAsync();
+        return cards.Select(e => new CardDto.Read
         {
             CardId = e.CardId,
             UserId = e.UserId,
@@ -33,7 +32,7 @@ public class CardService : ICardService
             CreditLimit = e.CreditLimit,
             IsDeleted = e.IsDeleted,
             DeletedAt = e.DeletedAt,
-        });
+        }).ToList();
 
     }
 
