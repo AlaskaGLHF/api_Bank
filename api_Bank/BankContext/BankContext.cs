@@ -1,7 +1,8 @@
-﻿using api_bank.Models;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace api_Bank.BankContext;
+namespace api_bank.Models;
 
 public partial class BankContext : DbContext
 {
@@ -37,6 +38,10 @@ public partial class BankContext : DbContext
     public virtual DbSet<TransactionStatus> TransactionStatuses { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host= localhost;Port=5432;Database=Bank;Username= postgres;Password= yNx-tKr-zA9-kEZ ");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

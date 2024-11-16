@@ -1,8 +1,8 @@
-using api_Bank.BankContext;
 using api_Bank.Interfaces;
 using api_bank.Repositories;
 using api_Bank.Services;
 using Microsoft.EntityFrameworkCore;
+using api_bank.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

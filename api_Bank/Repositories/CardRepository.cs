@@ -1,5 +1,4 @@
-﻿using api_Bank.BankContext;
-using api_Bank.Interfaces;
+﻿using api_Bank.Interfaces;
 using api_bank.Models;
 using Microsoft.EntityFrameworkCore;
 

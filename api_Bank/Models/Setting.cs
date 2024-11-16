@@ -1,4 +1,7 @@
-﻿namespace api_bank.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace api_bank.Models;
 
 public partial class Setting
 {

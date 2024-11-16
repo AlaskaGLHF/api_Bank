@@ -23,7 +23,7 @@ public class CardService : ICardService
             UserId = e.UserId,
             CardNumber = e.CardNumber,
             CardType = e.CardType,
-            ExpirationDate = e.ExpirationDate.ToUniversalTime(),
+            ExpirationDate = e.ExpirationDate,
             Balance = e.Balance,
             CurrencyId = e.CurrencyId,
             CreditLimit = e.CreditLimit,
@@ -88,7 +88,7 @@ public class CardService : ICardService
         card.CardNumber = cardDto.CardNumber;
         card.Balance = cardDto.Balance;
         card.CardType = cardDto.CardType;
-        card.ExpirationDate = cardDto.ExpirationDate.ToUniversalTime();
+        card.ExpirationDate = cardDto.ExpirationDate;
         card.CreditLimit = cardDto.CreditLimit;
         card.IsDeleted = cardDto.IsDeleted;
         card.DeletedAt = cardDto.DeletedAt;
@@ -103,12 +103,12 @@ public class CardService : ICardService
         {
             return null;
         }
-        
-        var dt = DateTime.UtcNow;
-        
+       
         card.IsDeleted = true;
+
+        card.DeletedAt = DateTime.Now;
         
-        Console.Write($"Время сейчас = {dt.ToString()}");
+  
         
         await _cardRepository.UpdateAsync(card);
     
@@ -122,8 +122,8 @@ public class CardService : ICardService
             Balance = card.Balance,
             CurrencyId = card.CurrencyId,
             CreditLimit = card.CreditLimit,
-            IsDeleted = card.IsDeleted,
-            DeletedAt = card.DeletedAt,
+            IsDeleted = card.IsDeleted = true,
+            DeletedAt = card.DeletedAt = DateTime.Now
         };
     }
 

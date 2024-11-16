@@ -1,6 +1,9 @@
-﻿namespace api_bank.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class Employee
+namespace api_bank.Models;
+
+public partial class Employee
 {
     public int EmployeeId { get; set; }
 

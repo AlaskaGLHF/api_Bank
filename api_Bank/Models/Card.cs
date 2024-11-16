@@ -1,6 +1,9 @@
-﻿namespace api_bank.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class Card
+namespace api_bank.Models;
+
+public partial class Card
 {
     public int CardId { get; set; }
 
@@ -10,7 +13,7 @@ public class Card
 
     public string? CardType { get; set; }
 
-    public DateTime ExpirationDate { get; set; }
+    public DateOnly ExpirationDate { get; set; }
 
     public decimal? Balance { get; set; }
 
@@ -20,7 +23,7 @@ public class Card
 
     public bool? IsDeleted { get; set; }
 
-    public DateTime? DeletedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? DeletedAt { get; set; }
 
     public virtual ICollection<BalanceHistory> BalanceHistories { get; set; } = new List<BalanceHistory>();
 
