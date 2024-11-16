@@ -20,7 +20,7 @@ public class Card
 
     public bool? IsDeleted { get; set; }
 
-    public DateTime? DeletedAt { get; set; }
+    public DateTime? DeletedAt { get; set; } = DateTime.UtcNow;
 
     public virtual ICollection<BalanceHistory> BalanceHistories { get; set; } = new List<BalanceHistory>();
 

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ivanl\\test\\API_FOR_BANK\\api_Bank\\api_Bank.csproj": {}
+    "C:\\Users\\ivanl\\test\\API_FOR_BANK\\api_bank\\api_Bank.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ivanl\\test\\API_FOR_BANK\\api_Bank\\api_Bank.csproj": {
+    "C:\\Users\\ivanl\\test\\API_FOR_BANK\\api_bank\\api_Bank.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ivanl\\test\\API_FOR_BANK\\api_Bank\\api_Bank.csproj",
+        "projectUniqueName": "C:\\Users\\ivanl\\test\\API_FOR_BANK\\api_bank\\api_Bank.csproj",
         "projectName": "api_Bank",
-        "projectPath": "C:\\Users\\ivanl\\test\\API_FOR_BANK\\api_Bank\\api_Bank.csproj",
+        "projectPath": "C:\\Users\\ivanl\\test\\API_FOR_BANK\\api_bank\\api_Bank.csproj",
         "packagesPath": "C:\\Users\\ivanl\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ivanl\\test\\API_FOR_BANK\\api_Bank\\obj\\",
+        "outputPath": "C:\\Users\\ivanl\\test\\API_FOR_BANK\\api_bank\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ivanl\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -50,7 +50,15 @@
               "target": "Package",
               "version": "[8.0.10, )"
             },
-            "Microsoft.EntityFrameworkCore": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
               "target": "Package",
               "version": "[9.0.0, )"
             },

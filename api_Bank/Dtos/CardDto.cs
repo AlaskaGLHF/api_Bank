@@ -20,6 +20,8 @@
             public DateTime ExpirationDate { get; set; }
             public decimal? Balance { get; set; }
             public decimal? CreditLimit { get; set; }
+            public DateTime? DeletedAt { get; set; }
+            public bool? IsDeleted { get; set; }
         }
 
         public class Read

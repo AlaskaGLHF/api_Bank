@@ -41,11 +41,11 @@ namespace api_bank.Controllers
         {
             if (cardDto == null)
             {
-                return BadRequest(); // Возвращаем статус 400
+                return BadRequest(); 
             }
 
             var createdCard = await _cardService.CreateAsync(cardDto);
-            return CreatedAtAction(nameof(GetCardById), new { id = createdCard.CardId }, createdCard); // Возвращаем статус 201
+            return CreatedAtAction(nameof(GetCardById), new { id = createdCard.CardId }, createdCard);
         }
 
         // PUT: api/cards/{id}
@@ -54,17 +54,17 @@ namespace api_bank.Controllers
         {
             if (cardDto == null)
             {
-                return BadRequest(); // Возвращаем статус 400
+                return BadRequest();
             }
 
             var existingCard = await _cardService.GetByIdAsync(id);
             if (existingCard == null)
             {
-                return NotFound(); // Возвращаем статус 404, если карта не найдена
+                return Ok(cardDto);
             }
 
             await _cardService.UpdateAsync(id, cardDto);
-            return NoContent(); // Возвращаем статус 204
+            return NoContent(); 
         }
 
         // DELETE: api/cards/{id}
@@ -76,9 +76,9 @@ namespace api_bank.Controllers
             {
                 return NotFound();
             }
-
+            
             await _cardService.DeleteAsync(id);
-            return NoContent();
+            return Ok(card);
         }
     }
 }

@@ -1,22 +1,19 @@
-﻿using api_Bank.Dtos;
+﻿using System.Diagnostics;
+using api_Bank.Dtos;
 using api_Bank.Interfaces;
 using api_bank.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace api_Bank.Services;
 
 public class CardService : ICardService
 {
-    
     private readonly ICardRepository _cardRepository;
 
     public CardService(ICardRepository cardRepository)
     {
         _cardRepository = cardRepository;
     }
-    
-    
-    
+
     public async Task<List<CardDto.Read>> GetAllAsync()
     {
         var cards = await _cardRepository.GetAllAsync();
@@ -26,14 +23,13 @@ public class CardService : ICardService
             UserId = e.UserId,
             CardNumber = e.CardNumber,
             CardType = e.CardType,
-            ExpirationDate = e.ExpirationDate,
+            ExpirationDate = e.ExpirationDate.ToUniversalTime(),
             Balance = e.Balance,
             CurrencyId = e.CurrencyId,
             CreditLimit = e.CreditLimit,
             IsDeleted = e.IsDeleted,
-            DeletedAt = e.DeletedAt,
+            DeletedAt = e.DeletedAt?.ToUniversalTime(),
         }).ToList();
-
     }
 
     public async Task<CardDto.Read> GetByIdAsync(int id)
@@ -42,7 +38,8 @@ public class CardService : ICardService
 
         if (cards == null)
         {
-            return null;}
+            return null;
+        }
 
         return new CardDto.Read
         {
@@ -52,7 +49,7 @@ public class CardService : ICardService
             Balance = cards.Balance,
             CurrencyId = cards.CurrencyId,
             IsDeleted = cards.IsDeleted,
-            DeletedAt = cards.DeletedAt,
+            DeletedAt = cards.DeletedAt?.ToUniversalTime(),
         };
     }
 
@@ -65,7 +62,7 @@ public class CardService : ICardService
             Balance = cardDto.Balance,
             CardNumber = cardDto.CardNumber,
             IsDeleted = cardDto.IsDeleted,
-            DeletedAt = cardDto.DeletedAt,
+            DeletedAt = cardDto.DeletedAt
         };
 
         var createdCard = await _cardRepository.AddAsync(cards);
@@ -78,9 +75,8 @@ public class CardService : ICardService
             CardType = createdCard.CardType,
             CurrencyId = createdCard.CurrencyId,
             IsDeleted = createdCard.IsDeleted,
-            DeletedAt = createdCard.DeletedAt,
+            DeletedAt = createdCard.DeletedAt?.ToUniversalTime(),
         };
-
     }
 
     public async Task UpdateAsync(int id, CardDto.Update cardDto)
@@ -92,12 +88,14 @@ public class CardService : ICardService
         card.CardNumber = cardDto.CardNumber;
         card.Balance = cardDto.Balance;
         card.CardType = cardDto.CardType;
-        card.ExpirationDate = cardDto.ExpirationDate;
+        card.ExpirationDate = cardDto.ExpirationDate.ToUniversalTime();
         card.CreditLimit = cardDto.CreditLimit;
-        
+        card.IsDeleted = cardDto.IsDeleted;
+        card.DeletedAt = cardDto.DeletedAt;
+
         await _cardRepository.UpdateAsync(card);
     }
-    
+
     public async Task<CardDto.Read> DeleteAsync(int id)
     {
         var card = await _cardRepository.GetByIdAsync(id);
@@ -106,11 +104,14 @@ public class CardService : ICardService
             return null;
         }
         
-        card.IsDeleted = true;
-        card.DeletedAt = DateTime.UtcNow;
-
-        await _cardRepository.UpdateAsync(card);
+        var dt = DateTime.UtcNow;
         
+        card.IsDeleted = true;
+        
+        Console.Write($"Время сейчас = {dt.ToString()}");
+        
+        await _cardRepository.UpdateAsync(card);
+    
         return new CardDto.Read
         {
             CardId = card.CardId,
@@ -125,5 +126,5 @@ public class CardService : ICardService
             DeletedAt = card.DeletedAt,
         };
     }
-    
+
 }
