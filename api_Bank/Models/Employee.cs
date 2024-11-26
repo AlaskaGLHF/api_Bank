@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace api_bank.Models;
+﻿namespace api_bank.Models;
 
 public partial class Employee
 {

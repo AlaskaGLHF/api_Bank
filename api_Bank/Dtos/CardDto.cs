@@ -1,8 +1,12 @@
-﻿namespace api_Bank.Dtos
+﻿using Swashbuckle.AspNetCore.Annotations;
+
+namespace api_Bank.Dtos
 {
     public static class CardDto
     {
-        public class Create
+
+        [SwaggerSchema("CardDto.Create Schema")]
+        public class CardDtoCreate
         {
             public int UserId { get; set; }
             public int CardId { get; set; }
@@ -13,9 +17,10 @@
             public DateTime? DeletedAt { get; set; }
         }
 
-        public class Update
+        [SwaggerSchema("CardDto.Update Schema")]
+        public class CardDtoUpdate
         {
-            public string CardNumber { get; set; } = null!;
+            public required string CardNumber { get; set; }
             public string? CardType { get; set; }
             public DateOnly ExpirationDate { get; set; }
             public decimal? Balance { get; set; }
@@ -24,7 +29,8 @@
             public bool? IsDeleted { get; set; }
         }
 
-        public class Read
+        [SwaggerSchema("CardDto.Read Schema")]
+        public class CardDtoRead
         {
             public int CardId { get; set; }
             public int UserId { get; set; }

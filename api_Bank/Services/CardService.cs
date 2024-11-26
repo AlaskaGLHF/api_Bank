@@ -1,130 +1,131 @@
-﻿using System.Diagnostics;
-using api_Bank.Dtos;
+﻿using api_Bank.Dtos;
 using api_Bank.Interfaces;
 using api_bank.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace api_Bank.Services;
-
-public class CardService : ICardService
+namespace api_Bank.Services
 {
-    private readonly ICardRepository _cardRepository;
-
-    public CardService(ICardRepository cardRepository)
+    public class CardService : ICardService
     {
-        _cardRepository = cardRepository;
-    }
+        private readonly ICardRepository _cardRepository;
 
-    public async Task<List<CardDto.Read>> GetAllAsync()
-    {
-        var cards = await _cardRepository.GetAllAsync();
-        return cards.Select(e => new CardDto.Read
+        public CardService(ICardRepository cardRepository)
         {
-            CardId = e.CardId,
-            UserId = e.UserId,
-            CardNumber = e.CardNumber,
-            CardType = e.CardType,
-            ExpirationDate = e.ExpirationDate,
-            Balance = e.Balance,
-            CurrencyId = e.CurrencyId,
-            CreditLimit = e.CreditLimit,
-            IsDeleted = e.IsDeleted,
-            DeletedAt = e.DeletedAt?.ToUniversalTime(),
-        }).ToList();
-    }
-
-    public async Task<CardDto.Read> GetByIdAsync(int id)
-    {
-        var cards = await _cardRepository.GetByIdAsync(id);
-
-        if (cards == null)
-        {
-            return null;
+            _cardRepository = cardRepository;
         }
 
-        return new CardDto.Read
+        public async Task<List<CardDto.CardDtoRead>> GetAllAsyncCard()
         {
-            CardId = cards.CardId,
-            UserId = cards.UserId,
-            CardNumber = cards.CardNumber,
-            Balance = cards.Balance,
-            CurrencyId = cards.CurrencyId,
-            IsDeleted = cards.IsDeleted,
-            DeletedAt = cards.DeletedAt?.ToUniversalTime(),
-        };
-    }
-
-    public async Task<CardDto.Read> CreateAsync(CardDto.Create cardDto)
-    {
-        var cards = new Card
-        {
-            UserId = cardDto.UserId,
-            CardId = cardDto.CardId,
-            Balance = cardDto.Balance,
-            CardNumber = cardDto.CardNumber,
-            IsDeleted = cardDto.IsDeleted,
-            DeletedAt = cardDto.DeletedAt
-        };
-
-        var createdCard = await _cardRepository.AddAsync(cards);
-
-        return new CardDto.Read
-        {
-            CardId = createdCard.CardId,
-            Balance = createdCard.Balance,
-            CardNumber = createdCard.CardNumber,
-            CardType = createdCard.CardType,
-            CurrencyId = createdCard.CurrencyId,
-            IsDeleted = createdCard.IsDeleted,
-            DeletedAt = createdCard.DeletedAt?.ToUniversalTime(),
-        };
-    }
-
-    public async Task UpdateAsync(int id, CardDto.Update cardDto)
-    {
-        var card = await _cardRepository.GetByIdAsync(id);
-
-        if (card == null) return;
-
-        card.CardNumber = cardDto.CardNumber;
-        card.Balance = cardDto.Balance;
-        card.CardType = cardDto.CardType;
-        card.ExpirationDate = cardDto.ExpirationDate;
-        card.CreditLimit = cardDto.CreditLimit;
-        card.IsDeleted = cardDto.IsDeleted;
-        card.DeletedAt = cardDto.DeletedAt;
-
-        await _cardRepository.UpdateAsync(card);
-    }
-
-    public async Task<CardDto.Read> DeleteAsync(int id)
-    {
-        var card = await _cardRepository.GetByIdAsync(id);
-        if (card == null)
-        {
-            return null;
+            var cards = await _cardRepository.GetAllAsyncCard();
+            return cards.Select(card => new CardDto.CardDtoRead
+            {
+                CardId = card.CardId,
+                UserId = card.UserId,
+                CardNumber = card.CardNumber,
+                CardType = card.CardType,
+                ExpirationDate = card.ExpirationDate,
+                Balance = card.Balance,
+                CurrencyId = card.CurrencyId,
+                CreditLimit = card.CreditLimit,
+                IsDeleted = card.IsDeleted,
+                DeletedAt = card.DeletedAt
+            }).ToList();
         }
-       
-        card.IsDeleted = true;
 
-        card.DeletedAt = DateTime.Now;
-        
-  
-        
-        await _cardRepository.UpdateAsync(card);
-    
-        return new CardDto.Read
+        public async Task<CardDto.CardDtoRead> GetByIdAsyncCard(int id)
         {
-            CardId = card.CardId,
-            UserId = card.UserId,
-            CardNumber = card.CardNumber,
-            CardType = card.CardType,
-            ExpirationDate = card.ExpirationDate,
-            Balance = card.Balance,
-            CurrencyId = card.CurrencyId,
-            CreditLimit = card.CreditLimit,
-            IsDeleted = card.IsDeleted = true,
-            DeletedAt = card.DeletedAt = DateTime.Now
-        };
-    }
+            var card = await _cardRepository.GetByIdAsyncCard(id);
+            if (card == null) throw new KeyNotFoundException("Card not found.");
 
+            return new CardDto.CardDtoRead
+            {
+                CardId = card.CardId,
+                UserId = card.UserId,
+                CardNumber = card.CardNumber,
+                CardType = card.CardType,
+                ExpirationDate = card.ExpirationDate,
+                Balance = card.Balance,
+                CurrencyId = card.CurrencyId,
+                CreditLimit = card.CreditLimit,
+                IsDeleted = card.IsDeleted,
+                DeletedAt = card.DeletedAt
+            };
+        }
+
+        public async Task<CardDto.CardDtoRead> CreateAsyncCard(CardDto.CardDtoCreate cardDto)
+        {
+            var card = new Card
+            {
+                UserId = cardDto.UserId,
+                CardNumber = cardDto.CardNumber,
+                ExpirationDate = cardDto.ExpirationDate,
+                Balance = cardDto.Balance,
+                IsDeleted = cardDto.IsDeleted,
+                DeletedAt = cardDto.DeletedAt
+            };
+
+            var createdCard = await _cardRepository.AddAsyncCard(card);
+            return new CardDto.CardDtoRead
+            {
+                CardId = createdCard.CardId,
+                UserId = createdCard.UserId,
+                CardNumber = createdCard.CardNumber,
+                CardType = createdCard.CardType,
+                ExpirationDate = createdCard.ExpirationDate,
+                Balance = createdCard.Balance,
+                CurrencyId = createdCard.CurrencyId,
+                CreditLimit = createdCard.CreditLimit,
+                IsDeleted = createdCard.IsDeleted,
+                DeletedAt = createdCard.DeletedAt
+            };
+        }
+
+        public async Task UpdateAsyncCard(int id, CardDto.CardDtoUpdate cardDto)
+        {
+            var card = await _cardRepository.GetByIdAsyncCard(id);
+            if (card == null) throw new KeyNotFoundException("Card not found.");
+
+            card.CardNumber = cardDto.CardNumber;
+            card.CardType = cardDto.CardType;
+            card.ExpirationDate = cardDto.ExpirationDate;
+            card.Balance = cardDto.Balance;
+            card.CreditLimit = cardDto.CreditLimit;
+            card.DeletedAt = cardDto.DeletedAt;
+            card.IsDeleted = cardDto.IsDeleted;
+
+            await _cardRepository.UpdateAsyncCard(card);
+        }
+
+        public async Task<CardDto.CardDtoRead?> DeleteAsyncCard(int id)
+        {
+            var card = await _cardRepository.GetByIdAsyncCard(id);
+
+            if (card == null)
+            {
+                // Можно выбросить исключение или вернуть null
+                return null;  // Возвращаем null, если карта не найдена
+            }
+
+            card.IsDeleted = true;
+            card.DeletedAt = DateTime.Now;
+
+            await _cardRepository.UpdateAsyncCard(card);
+
+            return new CardDto.CardDtoRead
+            {
+                CardId = card.CardId,
+                UserId = card.UserId,
+                CardNumber = card.CardNumber,
+                CardType = card.CardType,
+                ExpirationDate = card.ExpirationDate,
+                Balance = card.Balance,
+                CurrencyId = card.CurrencyId,
+                CreditLimit = card.CreditLimit,
+                IsDeleted = card.IsDeleted,
+                DeletedAt = card.DeletedAt
+            };
+        }
+
+    }
 }

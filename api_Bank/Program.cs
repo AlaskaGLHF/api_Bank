@@ -1,33 +1,83 @@
 using api_Bank.Interfaces;
-using api_bank.Repositories;
 using api_Bank.Services;
 using Microsoft.EntityFrameworkCore;
-using api_bank.Models;
+using api_Bank.BankContext;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.OpenApi.Models;
+using api_bank.Repositories;
+using api_Bank;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins", policy => //Свагер ругался на метод и пришлось этим фиксить
+    options.AddPolicy("AllowAllOrigins", policy =>
     {
-        policy.AllowAnyOrigin() 
-            .AllowAnyMethod()  
-            .AllowAnyHeader(); 
+        policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
     });
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme =
+    options.DefaultChallengeScheme =
+    options.DefaultForbidScheme =
+    options.DefaultScheme =
+    options.DefaultSignInScheme =
+    options.DefaultSignOutScheme =
+   JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new
+   TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["JWT:Audience"],
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new
+   SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigninKey"])),
+        ValidateLifetime = true,
+    };
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("User", policy =>
+   policy.RequireRole("User"));
+    options.AddPolicy("Admin", policy =>
+   policy.RequireRole("Admin"));
 });
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddDbContext<BankContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Enable Swagger annotations and customize SchemaId to avoid conflicts
+builder.Services.AddSwaggerGen(options =>
+{
+    options.MapType<api_Bank.Dtos.UserDto.UserDtoUpdate>(() => new OpenApiSchema { Type = "object", Title = "UserDto_Update" });
+    options.MapType<api_Bank.Dtos.CardDto.CardDtoUpdate>(() => new OpenApiSchema { Type = "object", Title = "CardDto_Update" });
+
+    // Register the CustomSchemaIdFilter
+    options.SchemaFilter<CustomSchemaIdFilter>();
+    options.EnableAnnotations();
+    options.SchemaFilter<CustomSchemaIdFilter>(); 
+
+});
+
+
 
 var app = builder.Build();
 
@@ -38,10 +88,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-builder.Configuration.AddUserSecrets<Program>();
-
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

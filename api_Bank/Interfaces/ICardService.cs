@@ -5,13 +5,9 @@ namespace api_Bank.Interfaces;
 public interface ICardService
 {
     
-    Task<List<CardDto.Read>> GetAllAsync();
-    
-    Task<CardDto.Read> GetByIdAsync(int id);
-
-    Task<CardDto.Read> CreateAsync(CardDto.Create cardDto);
-   
-    Task UpdateAsync(int id, CardDto.Update cardDto);
-    
-    Task<CardDto.Read> DeleteAsync(int id);
+    Task<List<CardDto.CardDtoRead>> GetAllAsyncCard();
+    Task<CardDto.CardDtoRead> GetByIdAsyncCard(int id);
+    Task<CardDto.CardDtoRead> CreateAsyncCard(CardDto.CardDtoCreate cardDto);
+    Task UpdateAsyncCard(int id, CardDto.CardDtoUpdate cardDto);
+    Task<CardDto.CardDtoRead?> DeleteAsyncCard(int id);
 }

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using api_bank.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace api_bank.Models;
+namespace api_Bank.BankContext;
 
 public partial class BankContext : DbContext
 {
@@ -15,33 +16,30 @@ public partial class BankContext : DbContext
     {
     }
 
-    public virtual DbSet<Address> Addresses { get; set; }
+    public required virtual DbSet<Address> Addresses { get; set; }
 
-    public virtual DbSet<BalanceHistory> BalanceHistories { get; set; }
+    public required virtual DbSet<BalanceHistory> BalanceHistories { get; set; }
 
-    public virtual DbSet<Card> Cards { get; set; }
+    public required virtual DbSet<Card> Cards { get; set; }
 
-    public virtual DbSet<CardRequest> CardRequests { get; set; }
+    public required virtual DbSet<CardRequest> CardRequests { get; set; }
 
-    public virtual DbSet<Country> Countries { get; set; }
+    public required virtual DbSet<Country> Countries { get; set; }
 
-    public virtual DbSet<Currency> Currencies { get; set; }
+    public required virtual DbSet<Currency> Currencies { get; set; }
 
-    public virtual DbSet<Employee> Employees { get; set; }
+    public required virtual DbSet<Employee> Employees { get; set; }
 
-    public virtual DbSet<Notification> Notifications { get; set; }
+    public required virtual DbSet<Notification> Notifications { get; set; }
 
-    public virtual DbSet<Setting> Settings { get; set; }
+    public required virtual DbSet<Setting> Settings { get; set; }
 
-    public virtual DbSet<Transaction> Transactions { get; set; }
+    public required virtual DbSet<Transaction> Transactions { get; set; }
 
-    public virtual DbSet<TransactionStatus> TransactionStatuses { get; set; }
+    public required virtual DbSet<TransactionStatus> TransactionStatuses { get; set; }
 
-    public virtual DbSet<User> Users { get; set; }
+    public required virtual DbSet<User> Users { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host= localhost;Port=5432;Database=Bank;Username= postgres;Password= yNx-tKr-zA9-kEZ ");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
