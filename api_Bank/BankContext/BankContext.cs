@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using api_bank.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace api_Bank.BankContext;
+namespace api_bank.Models;
 
 public partial class BankContext : DbContext
 {
@@ -32,6 +32,8 @@ public partial class BankContext : DbContext
 
     public required virtual DbSet<Notification> Notifications { get; set; }
 
+    public required virtual DbSet<Role> Roles { get; set; }
+
     public required virtual DbSet<Setting> Settings { get; set; }
 
     public required virtual DbSet<Transaction> Transactions { get; set; }
@@ -40,6 +42,7 @@ public partial class BankContext : DbContext
 
     public required virtual DbSet<User> Users { get; set; }
 
+    public required virtual DbSet<UserRole> UserRoles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -265,6 +268,51 @@ public partial class BankContext : DbContext
                 .HasConstraintName("notifications_user_id_fkey");
         });
 
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasNoKey();
+
+            entity.Property(e => e.CountryId).HasColumnName("country_id");
+            entity.Property(e => e.CreatedDate)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("created_date");
+            entity.Property(e => e.DeletedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("deleted_at");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .HasColumnName("email");
+            entity.Property(e => e.HashPassword)
+                .HasMaxLength(255)
+                .HasColumnName("hash_password");
+            entity.Property(e => e.ImagePath)
+                .HasMaxLength(255)
+                .HasColumnName("image_path");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValue(false)
+                .HasColumnName("is_deleted");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
+            entity.Property(e => e.Patronymic)
+                .HasMaxLength(50)
+                .HasColumnName("patronymic");
+            entity.Property(e => e.PhoneNumber)
+                .HasMaxLength(15)
+                .HasColumnName("phone_number");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .HasColumnName("status");
+            entity.Property(e => e.Surname)
+                .HasMaxLength(50)
+                .HasColumnName("surname");
+            entity.Property(e => e.UserId)
+                .HasDefaultValueSql("nextval('users_user_id_seq'::regclass)")
+                .HasColumnName("user_id");
+        });
+
         modelBuilder.Entity<Setting>(entity =>
         {
             entity.HasKey(e => e.SettingId).HasName("settings_pkey");
@@ -384,6 +432,7 @@ public partial class BankContext : DbContext
             entity.Property(e => e.PhoneNumber)
                 .HasMaxLength(15)
                 .HasColumnName("phone_number");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
                 .HasColumnName("status");
@@ -394,6 +443,23 @@ public partial class BankContext : DbContext
             entity.HasOne(d => d.Country).WithMany(p => p.Users)
                 .HasForeignKey(d => d.CountryId)
                 .HasConstraintName("users_country_id_fkey");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Users)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("fk_role");
+        });
+
+        modelBuilder.Entity<UserRole>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("user_role_pkey");
+
+            entity.ToTable("user_role");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.RoleName)
+                .HasMaxLength(255)
+                .HasColumnName("role_name");
         });
 
         OnModelCreatingPartial(modelBuilder);

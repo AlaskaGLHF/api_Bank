@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace api_bank.Models;
 
-public partial class User
+public partial class Role
 {
     public int UserId { get; set; }
 
@@ -32,16 +32,4 @@ public partial class User
     public string? ImagePath { get; set; }
 
     public int? RoleId { get; set; }
-
-    public virtual ICollection<CardRequest> CardRequests { get; set; } = new List<CardRequest>();
-
-    public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
-
-    public virtual Country? Country { get; set; }
-
-    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
-
-    public virtual UserRole? Role { get; set; }
-
-    public virtual ICollection<Setting> Settings { get; set; } = new List<Setting>();
 }

@@ -11,5 +11,6 @@ namespace api_Bank.Interfaces
         Task<UserDto.UserDtoRead?> CreateAsyncUser(UserDto.UserDtoCreate userDto);
         Task UpdateAsyncUser(int id, UserDto.UserDtoUpdate userDto);
         Task<UserDto.UserDtoRead?> DeleteAsyncUser(int id);
+        Task<UserDto.UserDtoRead> CreateRegUserAsync(RegisterDto);
     }
 }

@@ -12,6 +12,6 @@ namespace api_Bank.Dtos
         [Required]
         public string? Password { get; set; }
         [Required]
-        public string? Telephone { get; set; }
+        public string? PhoneNumber { get; set; }
     }
 }

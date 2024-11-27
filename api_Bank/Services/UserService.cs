@@ -136,5 +136,34 @@ namespace api_Bank.Services
                 ImagePath = user.ImagePath
             };
         }
-    }
+
+        public async Task<UserDto.UserDtoRead?> CreateRegUserAsync(RegisterDto regDto)
+        {
+            var user = new User
+            {
+                Name = regDto.Name,
+                Email = regDto.Email,
+                HashPassword = regDto.Password,
+                PhoneNumber = regDto.PhoneNumber
+            };
+
+            var createdUser = await _userRepository.CreateUserAsyncUser(user);
+            return new UserDto.UserDtoRead
+            {
+                UserId = createdUser.UserId,
+                Name = createdUser.Name,
+                Surname = createdUser.Surname,
+                Patronymic = createdUser.Patronymic,
+                Email = createdUser.Email,
+                PhoneNumber = createdUser.PhoneNumber,
+                CreatedDate = createdUser.CreatedDate,
+                CountryId = createdUser.CountryId,
+                Status = createdUser.Status,
+                IsDeleted = createdUser.IsDeleted,
+                DeletedAt = createdUser.DeletedAt,
+                ImagePath = createdUser.ImagePath
+            };
+
+
+        }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 namespace api_bank.Models;
+
 public partial class Address
 {
     public int AddressId { get; set; }
