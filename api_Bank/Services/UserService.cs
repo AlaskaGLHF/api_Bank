@@ -5,12 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api_bank.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace api_Bank.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+
+        private readonly ITokenService _tokenService;
 
         public UserService(IUserRepository userRepository)
         {
@@ -39,7 +42,7 @@ namespace api_Bank.Services
 
         public async Task<UserDto.UserDtoRead?> GetByIdAsyncUser(int id)
         {
-            var user = await _userRepository.GetUserByIdAsyncUser(id);
+            var user = await _userRepository.GetUserByIdAsync(id);
             if (user == null) return null;
 
             return new UserDto.UserDtoRead
@@ -74,7 +77,7 @@ namespace api_Bank.Services
                 ImagePath = userDto.ImagePath
             };
 
-            var createdUser = await _userRepository.CreateUserAsyncUser(user);
+            var createdUser = await _userRepository.CreateUserAsync(user);
             return new UserDto.UserDtoRead
             {
                 UserId = createdUser.UserId,
@@ -94,7 +97,7 @@ namespace api_Bank.Services
 
         public async Task UpdateAsyncUser(int id, UserDto.UserDtoUpdate userDto)
         {
-            var user = await _userRepository.GetUserByIdAsyncUser(id);
+            var user = await _userRepository.GetUserByIdAsync(id);
             if (user == null) throw new KeyNotFoundException("User not found.");
 
             user.Name = userDto.Name;
@@ -108,18 +111,18 @@ namespace api_Bank.Services
             user.IsDeleted = userDto.IsDeleted;
             user.ImagePath = userDto.ImagePath;
 
-            await _userRepository.UpdateUserAsyncUser(user);
+            await _userRepository.UpdateUserAsync(user);
         }
 
         public async Task<UserDto.UserDtoRead?> DeleteAsyncUser(int id)
         {
-            var user = await _userRepository.GetUserByIdAsyncUser(id);
+            var user = await _userRepository.GetUserByIdAsync(id);
             if (user == null) return null;
 
             user.IsDeleted = true;
             user.DeletedAt = DateTime.Now;
 
-            await _userRepository.UpdateUserAsyncUser(user);
+            await _userRepository.UpdateUserAsync(user);
             return new UserDto.UserDtoRead
             {
                 UserId = user.UserId,
@@ -137,33 +140,49 @@ namespace api_Bank.Services
             };
         }
 
-        public async Task<UserDto.UserDtoRead?> CreateRegUserAsync(RegisterDto regDto)
+        public async Task<NewUserDto> RegisterUserAsync(RegisterDto registerDto)
         {
+            // Преобразуем RegisterDto в модель User
             var user = new User
             {
-                Name = regDto.Name,
-                Email = regDto.Email,
-                HashPassword = regDto.Password,
-                PhoneNumber = regDto.PhoneNumber
+                Name = registerDto.Name,
+                Email = registerDto.Email,
+                HashPassword= registerDto.Password, 
+                PhoneNumber = registerDto.PhoneNumber
             };
 
-            var createdUser = await _userRepository.CreateUserAsyncUser(user);
-            return new UserDto.UserDtoRead
+            
+            var createdUser = await _userRepository.CreateUserAsync(user);
+
+            return new NewUserDto
             {
-                UserId = createdUser.UserId,
                 Name = createdUser.Name,
-                Surname = createdUser.Surname,
-                Patronymic = createdUser.Patronymic,
                 Email = createdUser.Email,
-                PhoneNumber = createdUser.PhoneNumber,
-                CreatedDate = createdUser.CreatedDate,
-                CountryId = createdUser.CountryId,
-                Status = createdUser.Status,
-                IsDeleted = createdUser.IsDeleted,
-                DeletedAt = createdUser.DeletedAt,
-                ImagePath = createdUser.ImagePath
+                Token = _tokenService.CreateToken(createdUser)
             };
-
-
         }
-}
+
+        public async Task<NewUserDto> AuthenticateAsync(LoginDto loginDto)
+        {
+            
+            var user = await _userRepository.GetByLoginAsync(loginDto.Name.ToLower());
+
+            if (user == null)
+            {
+                return null; 
+            }
+
+            if (loginDto.Password != user.HashPassword)
+            {
+                return null; 
+            }
+            return new NewUserDto
+            {
+                Name = user.Name,
+                Email = user.Email,
+                Token = _tokenService.CreateToken(user) 
+            };
+        }
+    }
+    }
+

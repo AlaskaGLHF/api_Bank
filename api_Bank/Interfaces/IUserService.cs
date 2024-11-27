@@ -1,4 +1,5 @@
-﻿using api_Bank.Dtos;
+﻿using api_bank.Models;
+using api_Bank.Dtos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ namespace api_Bank.Interfaces
         Task<UserDto.UserDtoRead?> CreateAsyncUser(UserDto.UserDtoCreate userDto);
         Task UpdateAsyncUser(int id, UserDto.UserDtoUpdate userDto);
         Task<UserDto.UserDtoRead?> DeleteAsyncUser(int id);
-        Task<UserDto.UserDtoRead> CreateRegUserAsync(RegisterDto);
+        Task<NewUserDto> RegisterUserAsync(RegisterDto registerDto);
+        Task<NewUserDto> AuthenticateAsync(LoginDto loginDto);
     }
 }

@@ -6,9 +6,10 @@ namespace api_bank.Repositories
     public interface IUserRepository
     {
         Task<List<User>> GetAllAsyncUser();
-        Task<User> GetUserByIdAsyncUser(int id);
-        Task<User> CreateUserAsyncUser(User user);
-        Task<User> UpdateUserAsyncUser(User user);
-        Task<bool> DeleteUserAsyncUser(int id);
+        Task<User> GetUserByIdAsync(int id);
+        Task<User> CreateUserAsync(User user);
+        Task<User> UpdateUserAsync(User user);
+        Task<bool> DeleteUserAsync(int id);
+        Task<User> GetByLoginAsync(string login);
     }
 }

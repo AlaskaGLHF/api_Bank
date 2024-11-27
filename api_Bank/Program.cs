@@ -1,13 +1,13 @@
 using api_Bank.Interfaces;
 using api_Bank.Services;
 using Microsoft.EntityFrameworkCore;
-using api_Bank.BankContext;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.OpenApi.Models;
 using api_bank.Repositories;
 using api_Bank;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using api_bank.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,7 +73,27 @@ builder.Services.AddSwaggerGen(options =>
     // Register the CustomSchemaIdFilter
     options.SchemaFilter<CustomSchemaIdFilter>();
     options.EnableAnnotations();
-    options.SchemaFilter<CustomSchemaIdFilter>(); 
+    options.SchemaFilter<CustomSchemaIdFilter>();
+
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "API Bank", Version = "v1" });
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Enter JWT token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });
 
 });
 

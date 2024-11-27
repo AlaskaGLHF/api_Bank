@@ -1,6 +1,7 @@
 ﻿using api_Bank.Dtos;
 using api_Bank.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace api_Bank.Controllers
 {
@@ -8,55 +9,39 @@ namespace api_Bank.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly ITokenService _tokenService;
         private readonly IUserService _userService;
-        public AccountController(ITokenService tokenServices,
-       IUserService userService)
+
+        public AccountController(IUserService userService)
         {
-            _tokenService = tokenServices;
             _userService = userService;
         }
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody]RegisterDto regiserDto)
+
+        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             try
             {
-                var createdUser = await _userService.CreateRegUserAsync(RegisterDto);
-                return Ok(
-                new NewUserDto
-                {
-                    Name = createdUser.Name,
-                    Email = createdUser.Email,
-                    Token = _tokenService.CreateToken(createdUser)
-                }
-                );
+                var newUserDto = await _userService.RegisterUserAsync(registerDto);
+
+                return Ok(newUserDto);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex);
+                return StatusCode(500, "An error occurred during registration.");
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginDto LoginDto)
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            var user = await
-           _userService.GetByIdAsyncUser(LoginDto.Name.ToLower());
-            if (user == null)
+           
+            var newUserDto = await _userService.AuthenticateAsync(loginDto);
+
+            if (newUserDto == null)
             {
-                return Unauthorized("Invalid username!");
+                return Unauthorized("Invalid username or password!"); 
             }
-            if (!LoginDto.Password.Equals(user.Password))
-            {
-                return Unauthorized("Username not found and/or password");
-            }
-            return Ok(
-            new NewUserDto
-            {
-                Name = user.Name,
-                Email = user.Email,
-                Token = _tokenService.CreateToken(user)
-            }
-            );
+
+            return Ok(newUserDto); 
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using api_bank.Models;
 using api_bank.Repositories;
 using System;
-using api_Bank.BankContext;
 
 namespace api_bank.Repositories;
     public class UserRepository : IUserRepository
@@ -15,7 +14,7 @@ namespace api_bank.Repositories;
             _context = context;
         }
 
-    public async Task<User> GetUserByIdAsyncUser(int id)
+    public async Task<User> GetUserByIdAsync(int id)
     {
         var user = await _context.Users.FindAsync(id);
 
@@ -27,21 +26,21 @@ namespace api_bank.Repositories;
         return user;
     }
 
-    public async Task<User> CreateUserAsyncUser(User user)
+    public async Task<User> CreateUserAsync(User user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return user;
         }
 
-        public async Task<User> UpdateUserAsyncUser(User user)
+        public async Task<User> UpdateUserAsync(User user)
         {
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return user;
         }
 
-        public async Task<bool> DeleteUserAsyncUser(int id)
+        public async Task<bool> DeleteUserAsync(int id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return false;
@@ -54,5 +53,11 @@ namespace api_bank.Repositories;
     public async Task<List<User>> GetAllAsyncUser()
     {
         return await _context.Users.ToListAsync();
+    }
+
+    public async Task<User> GetByLoginAsync(string login)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.Name.ToLower() == login.ToLower() || u.Email.ToLower() == login.ToLower());
     }
 }
