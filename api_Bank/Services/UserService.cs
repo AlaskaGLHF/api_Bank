@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api_bank.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace api_Bank.Services
 {
@@ -142,16 +143,18 @@ namespace api_Bank.Services
 
         public async Task<NewUserDto> RegisterUserAsync(RegisterDto registerDto)
         {
-            // Преобразуем RegisterDto в модель User
+            
+#pragma warning disable CS8601 // Возможно, назначение-ссылка, допускающее значение NULL.
             var user = new User
             {
                 Name = registerDto.Name,
                 Email = registerDto.Email,
-                HashPassword= registerDto.Password, 
+                HashPassword = registerDto.Password,
                 PhoneNumber = registerDto.PhoneNumber
             };
+#pragma warning restore CS8601 // Возможно, назначение-ссылка, допускающее значение NULL.
 
-            
+
             var createdUser = await _userRepository.CreateUserAsync(user);
 
             return new NewUserDto

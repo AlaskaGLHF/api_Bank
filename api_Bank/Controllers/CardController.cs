@@ -1,6 +1,7 @@
 using api_Bank.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using api_Bank.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api_bank.Controllers
 {
@@ -14,8 +15,9 @@ namespace api_bank.Controllers
         {
             _cardService = cardService;
         }
-        
+
         // GET: api/cards
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CardDto.CardDtoRead>>> GetAllCards()
         {
@@ -24,6 +26,7 @@ namespace api_bank.Controllers
         }
 
         // GET: api/cards/{id}
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<CardDto.CardDtoRead>> GetCardById(int id)
         {
@@ -36,6 +39,7 @@ namespace api_bank.Controllers
         }
 
         // POST: api/cards
+        [Authorize(Roles = "User")]
         [HttpPost]
         public async Task<ActionResult<CardDto.CardDtoRead>> CreateCard([FromBody] CardDto.CardDtoCreate cardDto)
         {
@@ -50,6 +54,7 @@ namespace api_bank.Controllers
 
         // PUT: api/cards/{id}
         [HttpPut("{id}")]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> UpdateCard(int id, [FromBody] CardDto.CardDtoUpdate cardDto)
         {
             if (cardDto == null)
@@ -69,6 +74,7 @@ namespace api_bank.Controllers
 
         // DELETE: api/cards/{id}
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCard(int id)
         {
             var card = await _cardService.GetByIdAsyncCard(id);

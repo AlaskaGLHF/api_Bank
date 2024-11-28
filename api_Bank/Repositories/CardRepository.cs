@@ -1,7 +1,6 @@
 ﻿using api_Bank.Interfaces;
 using api_bank.Models;
 using Microsoft.EntityFrameworkCore;
-using api_Bank.BankContext;
 
 namespace api_bank.Repositories;
 

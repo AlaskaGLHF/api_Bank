@@ -3,6 +3,7 @@ using api_Bank.Services;
 using System.Threading.Tasks;
 using api_Bank.Dtos;
 using api_Bank.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api_Bank.Controllers
 {
@@ -20,6 +21,7 @@ namespace api_Bank.Controllers
 
         // GET: api/cards
         [HttpGet]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult<IEnumerable<CardDto.CardDtoRead>>> GetAllCards()
         {
             var users = await _userService.GetAllAsyncUser();
@@ -27,6 +29,7 @@ namespace api_Bank.Controllers
         }
 
         // GET api/user/{id}
+        [Authorize(Roles = "User")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
@@ -37,6 +40,7 @@ namespace api_Bank.Controllers
         }
 
         // POST api/user
+        [Authorize(Roles = "User")]
         [HttpPost]
         public async Task<ActionResult<UserDto.UserDtoRead>> CreateUser([FromBody] UserDto.UserDtoCreate userDto)
         {
@@ -51,6 +55,7 @@ namespace api_Bank.Controllers
 
 
         // PUT api/user/{id}
+        [Authorize(Roles = "User")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserDto.UserDtoUpdate userDto)
         {
@@ -62,6 +67,7 @@ namespace api_Bank.Controllers
         }
 
         // DELETE api/user/{id}
+        [Authorize(Roles = "User")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {

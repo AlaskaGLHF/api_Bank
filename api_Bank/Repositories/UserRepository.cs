@@ -57,6 +57,11 @@ namespace api_bank.Repositories;
 
     public async Task<User> GetByLoginAsync(string login)
     {
+        if (string.IsNullOrEmpty(login))
+        {
+            throw new ArgumentException($"\"{nameof(login)}\" не может быть неопределенным или пустым.", nameof(login));
+        }
+
         return await _context.Users
             .FirstOrDefaultAsync(u => u.Name.ToLower() == login.ToLower() || u.Email.ToLower() == login.ToLower());
     }

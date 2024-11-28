@@ -30,19 +30,17 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme =
     options.DefaultSignInScheme =
     options.DefaultSignOutScheme =
-   JwtBearerDefaults.AuthenticationScheme;
+    JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
-    options.TokenValidationParameters = new
-   TokenValidationParameters
+    options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidIssuer = builder.Configuration["JWT:Issuer"],
         ValidateAudience = true,
         ValidAudience = builder.Configuration["JWT:Audience"],
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new
-   SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(s: builder.Configuration["JWT:SigninKey"])),
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigninKey"])),
         ValidateLifetime = true,
     };
 });
@@ -50,9 +48,9 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("User", policy =>
-   policy.RequireRole("User"));
+        policy.RequireRole("User"));
     options.AddPolicy("Admin", policy =>
-   policy.RequireRole("Admin"));
+        policy.RequireRole("Admin"));
 });
 
 builder.Services.AddControllers();
@@ -65,39 +63,42 @@ builder.Services.AddDbContext<BankContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Enable Swagger annotations and customize SchemaId to avoid conflicts
-builder.Services.AddSwaggerGen(options =>
+builder.Services.AddSwaggerGen(option =>
 {
-    options.MapType<api_Bank.Dtos.UserDto.UserDtoUpdate>(() => new OpenApiSchema { Type = "object", Title = "UserDto_Update" });
-    options.MapType<api_Bank.Dtos.CardDto.CardDtoUpdate>(() => new OpenApiSchema { Type = "object", Title = "CardDto_Update" });
+    // Конфигурация документации Swagger
+    option.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Demo API",
+        Version = "v1"
+    });
 
-    // Register the CustomSchemaIdFilter
-    options.SchemaFilter<CustomSchemaIdFilter>();
-    options.EnableAnnotations();
-    options.SchemaFilter<CustomSchemaIdFilter>();
-
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "API Bank", Version = "v1" });
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    // Определение схемы безопасности
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Description = "Enter JWT token",
+        Description = "Please enter a valid token",
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
         Scheme = "Bearer"
     });
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+
+    // Требование безопасности для всех операций
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
             },
-            Array.Empty<string>()
+            new string[]{}
         }
     });
-
 });
-
-
 
 var app = builder.Build();
 
