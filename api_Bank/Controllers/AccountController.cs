@@ -16,6 +16,8 @@ namespace api_Bank.Controllers
             _userService = userService;
         }
 
+
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             try
