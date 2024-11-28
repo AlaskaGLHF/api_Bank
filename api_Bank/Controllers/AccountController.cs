@@ -20,16 +20,14 @@ namespace api_Bank.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
-            try
+            var newUserDto = await _userService.RegisterUserAsync(registerDto);
+            if (registerDto == null)
             {
-                var newUserDto = await _userService.RegisterUserAsync(registerDto);
+                return null;
+            }
 
                 return Ok(newUserDto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred during registration.");
-            }
+          
         }
 
         [HttpPost("login")]

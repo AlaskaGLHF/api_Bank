@@ -5,20 +5,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api_bank.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace api_Bank.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-
         private readonly ITokenService _tokenService;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, ITokenService tokenService)
         {
-            _userRepository = userRepository;
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
         }
 
         public async Task<List<UserDto.UserDtoRead>> GetAllAsyncUser()
@@ -143,17 +141,15 @@ namespace api_Bank.Services
 
         public async Task<NewUserDto> RegisterUserAsync(RegisterDto registerDto)
         {
-            
-#pragma warning disable CS8601 // Возможно, назначение-ссылка, допускающее значение NULL.
             var user = new User
             {
                 Name = registerDto.Name,
+                Surname = registerDto.Surname,
+                Patronymic = registerDto.Patronymic,
                 Email = registerDto.Email,
                 HashPassword = registerDto.Password,
                 PhoneNumber = registerDto.PhoneNumber
             };
-#pragma warning restore CS8601 // Возможно, назначение-ссылка, допускающее значение NULL.
-
 
             var createdUser = await _userRepository.CreateUserAsync(user);
 
@@ -167,25 +163,23 @@ namespace api_Bank.Services
 
         public async Task<NewUserDto> AuthenticateAsync(LoginDto loginDto)
         {
-            
             var user = await _userRepository.GetByLoginAsync(loginDto.Name.ToLower());
 
             if (user == null)
             {
-                return null; 
+                return null;
             }
 
             if (loginDto.Password != user.HashPassword)
             {
-                return null; 
+                return null;
             }
             return new NewUserDto
             {
                 Name = user.Name,
                 Email = user.Email,
-                Token = _tokenService.CreateToken(user) 
+                Token = _tokenService.CreateToken(user)
             };
         }
     }
-    }
-
+}
